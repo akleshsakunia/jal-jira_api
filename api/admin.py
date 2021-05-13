@@ -15,12 +15,12 @@ class SprintAdmin(admin.ModelAdmin):
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('issue_id', 'reporter', 'issue_title', 'sprint')
+    list_display = ('reporter', 'issue_title', 'sprint')
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('project_title', 'start_date', 'status')
+    list_display = ('project_id', 'project_title', 'start_date', 'status')
 
 
 @admin.register(MyTodo)

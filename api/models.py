@@ -1,5 +1,4 @@
-import uuid
-from django.db import models
+from djongo import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -97,8 +96,6 @@ class Issue(models.Model):
         LOW = 'LOW'
 
     # fields
-    issue_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False)
     assignee = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE, related_name='assignee')
     reporter = models.ForeignKey(
