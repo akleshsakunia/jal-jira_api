@@ -1,7 +1,7 @@
-from djongo import models
+from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -17,6 +17,10 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     status = models.CharField(
         max_length=10, choices=ProjectStatus.choices, default=ProjectStatus.ACTIVE)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
+    updated_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
 
     @property
     def project_id(self):
@@ -24,7 +28,6 @@ class Project(models.Model):
 
     def __str__(self):
         return str(self.project_title)
-
 
 class Profile(models.Model):
     # constants
@@ -58,8 +61,11 @@ class Sprint(models.Model):
     class SprintStatus(models.TextChoices):
         ACTIVE = 'ACT'
         INACTIVE = 'INACT'
+    class Meta:
+        unique_together = (('display_id', 'project'),)
 
     # fields
+    display_id = models.IntegerField() # will be incremented per project
     short_description = models.CharField(max_length=50, blank=True)
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True, blank=True)
@@ -67,6 +73,10 @@ class Sprint(models.Model):
         max_length=10, choices=SprintStatus.choices, default=SprintStatus.INACTIVE)
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name='project')
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
+    updated_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
 
     @property
     def sprint_id(self):
@@ -74,6 +84,14 @@ class Sprint(models.Model):
 
     def __str__(self):
         return str(self.sprint_id)
+    
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_id = self.__class__.objects.filter(project_id=self.project_id).order_by('-id')
+            self.display_id = last_id[0].display_id + 1 if last_id else 1
+
+        super(Sprint, self).save(*args, **kwargs)
+
 
 
 class Issue(models.Model):
@@ -97,9 +115,9 @@ class Issue(models.Model):
 
     # fields
     assignee = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.CASCADE, related_name='assignee')
+        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assignee')
     reporter = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reporter')
+        User, on_delete=models.SET_NULL, null=True, related_name='reporter')
     issue_title = models.CharField(max_length=25, blank=False)
     description = models.CharField(max_length=100, blank=True)
     reported_on = models.DateField(auto_now_add=True)

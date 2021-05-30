@@ -11,7 +11,7 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Sprint)
 class SprintAdmin(admin.ModelAdmin):
     list_display = ('id', 'short_description', 'start_date', 'status')
-
+    exclude = ('display_id', ) 
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):

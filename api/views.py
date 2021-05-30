@@ -1,9 +1,9 @@
-from rest_framework import viewsets, permissions
+from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-
+from rest_framework.decorators import action
 from .models import Sprint, Issue, Project, MyTodo
 from .serializers import UserSerializer, SprintSerializer, IssuesSerializer, ProjectsSerializer, MyTodoSerializer
 
@@ -18,6 +18,15 @@ class SprintViewSet(viewsets.ModelViewSet):
     queryset = Sprint.objects.all()
     serializer_class = SprintSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(created_by=user)
+        serializer.save(updated_by=user)
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        serializer.save(updated_by=user)
 
 
 class IssueViewSet(viewsets.ModelViewSet):

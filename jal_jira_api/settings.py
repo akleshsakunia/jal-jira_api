@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
 ]
 
 
@@ -88,12 +88,20 @@ WSGI_APPLICATION = 'jal_jira_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'jaljira',
-        'CLIENT': {
-           'host': 'mongodb+srv://ishanism:'+ quote_plus(environ.get('MONGO_PASSWORD')) + '@ishanism.pjk5m.mongodb.net/test?retryWrites=true&ssl=true&ssl_cert_reqs=CERT_NONE&w=majority',
-        }
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
+    # 'default': {
+    #     'ENGINE': 'djongo',
+    #     'NAME': 'jaljira',
+    #     'CLIENT': {
+    #        'host': 'mongodb+srv://ishanism:'+ quote_plus(environ.get('MONGO_PASSWORD')) + '@ishanism.pjk5m.mongodb.net/test?retryWrites=true&ssl=true&ssl_cert_reqs=CERT_NONE&w=majority',
+    #     }
+    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
