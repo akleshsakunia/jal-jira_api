@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from .models import Sprint, Issue, Project, MyTodo
 from .serializers import UserSerializer, SprintSerializer, IssuesSerializer, ProjectsSerializer, MyTodoSerializer
-
+from django.db.models import Q
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -46,7 +46,7 @@ class MyTodoViewSet(viewsets.ModelViewSet):
     serializer_class = MyTodoSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
-class ListUsersIssues(APIView):
+class ListIssuesAssignedToUser(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, pk, format=None):
@@ -55,4 +55,26 @@ class ListUsersIssues(APIView):
         """
         assigned_issues = Issue.objects.filter(assignee=pk)
         serialized_data = IssuesSerializer(assigned_issues, many=True).data
+        return Response(serialized_data)
+class ListUsersIssues(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        """
+        Return a list of all users.
+        """
+        users_issues = Issue.objects.filter(Q(assignee=pk) | Q(reporter=pk))
+        serialized_data = IssuesSerializer(users_issues, many=True).data
+        return Response(serialized_data)
+class ListUsersProjects(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users projects.
+        """
+        print('pk is:', request.user.pk)
+        user = User.objects.get(pk=request.user.pk)
+        tagged_projects = user.profile.tagged_projects
+        serialized_data = ProjectsSerializer(tagged_projects, many=True).data
         return Response(serialized_data)

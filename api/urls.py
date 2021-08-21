@@ -16,5 +16,9 @@ urlpatterns = [
     path(r'api-token-auth/', obtain_jwt_token),
     path(r'api-token-refresh/', refresh_jwt_token),
     path(r'auth-jwt-verify/', verify_jwt_token),
-    path(r'assigned-issues/user/<int:pk>/', views.ListUsersIssues.as_view(), name='assigned_issues')
+    path(r'assigned-issues/user/<int:pk>/',
+         views.ListIssuesAssignedToUser.as_view(), name='assigned_issues'),
+    path(r'all-my-issues/user/<int:pk>/',
+         views.ListUsersIssues.as_view(), name='assigned_issues'),
+    path(r'get-my-projects/', views.ListUsersProjects.as_view(), name='my_projects')
 ]

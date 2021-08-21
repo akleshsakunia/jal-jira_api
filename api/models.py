@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Project(models.Model):
@@ -29,6 +30,7 @@ class Project(models.Model):
     def __str__(self):
         return str(self.project_title)
 
+
 class Profile(models.Model):
     # constants
     # USER_STATUS = models.TextChoices('ACTIVE', 'INACTIVE', 'COMPROMISED')
@@ -38,8 +40,8 @@ class Profile(models.Model):
     # status = models.CharField(max_length=15, blank=False, choices=USER_STATUS)
     bio = models.CharField(max_length=50, blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    tagged_projects = models.ForeignKey(
-        Project, null=True, blank=True, on_delete=models.CASCADE, related_name='projects')
+    tagged_projects = models.ManyToManyField(
+        Project, null=True, blank=True, related_name='projects')
 
     class meta:
         ordering = ['id']
@@ -61,11 +63,12 @@ class Sprint(models.Model):
     class SprintStatus(models.TextChoices):
         ACTIVE = 'ACT'
         INACTIVE = 'INACT'
+
     class Meta:
         unique_together = (('display_id', 'project'),)
 
     # fields
-    display_id = models.IntegerField() # will be incremented per project
+    display_id = models.IntegerField()  # will be incremented per project
     short_description = models.CharField(max_length=50, blank=True)
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True, blank=True)
@@ -84,14 +87,14 @@ class Sprint(models.Model):
 
     def __str__(self):
         return str(self.sprint_id)
-    
+
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_id = self.__class__.objects.filter(project_id=self.project_id).order_by('-id')
+            last_id = self.__class__.objects.filter(
+                project_id=self.project_id).order_by('-id')
             self.display_id = last_id[0].display_id + 1 if last_id else 1
 
         super(Sprint, self).save(*args, **kwargs)
-
 
 
 class Issue(models.Model):
@@ -107,6 +110,7 @@ class Issue(models.Model):
         TASK = 'TASK'
         STORY = 'STORY'
         BUG = 'BUG'
+        EPIC = 'EPIC'
 
     class PRIORITY(models.TextChoices):
         HIGH = 'HIGH'
@@ -114,13 +118,14 @@ class Issue(models.Model):
         LOW = 'LOW'
 
     # fields
+    uid = models.CharField(max_length=15, unique=True)
     assignee = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assignee')
     reporter = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='reporter')
     issue_title = models.CharField(max_length=25, blank=False)
     description = models.CharField(max_length=100, blank=True)
-    reported_on = models.DateField(auto_now_add=True)
+    reported_on = models.DateTimeField(default=timezone.now)
     start_date = models.DateField(null=True, blank=True)
     resolution_date = models.DateField(null=True, blank=True)
     estimate = models.CharField(max_length=50, blank=True)
@@ -133,6 +138,8 @@ class Issue(models.Model):
     relates_to = models.ManyToManyField('self', blank=True)
     priority = models.CharField(
         max_length=15, choices=PRIORITY.choices, default=PRIORITY.LOW)
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='related_project')
 
     def __str__(self):
         return str(self.issue_title)

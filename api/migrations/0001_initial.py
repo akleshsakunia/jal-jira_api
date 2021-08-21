@@ -17,63 +17,84 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('project_title', models.CharField(max_length=50, unique=True)),
                 ('abbr', models.CharField(max_length=5, unique=True)),
                 ('short_description', models.CharField(max_length=50)),
                 ('start_date', models.DateField(auto_now_add=True)),
                 ('end_date', models.DateField(blank=True, null=True)),
-                ('status', models.CharField(choices=[('ACT', 'Active'), ('INACT', 'Inactive')], default='ACT', max_length=10)),
+                ('status', models.CharField(choices=[
+                 ('ACT', 'Active'), ('INACT', 'Inactive')], default='ACT', max_length=10)),
             ],
         ),
         migrations.CreateModel(
             name='Sprint',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('short_description', models.CharField(blank=True, max_length=50)),
                 ('start_date', models.DateField(auto_now_add=True)),
                 ('end_date', models.DateField(blank=True, null=True)),
-                ('status', models.CharField(choices=[('ACT', 'Active'), ('INACT', 'Inactive')], default='INACT', max_length=10)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project', to='api.Project')),
+                ('status', models.CharField(choices=[
+                 ('ACT', 'Active'), ('INACT', 'Inactive')], default='INACT', max_length=10)),
+                ('project', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, related_name='project', to='api.Project')),
             ],
         ),
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('bio', models.CharField(blank=True, max_length=50)),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to='avatars/')),
-                ('tagged_projects', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='projects', to='api.Project')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('avatar', models.ImageField(
+                    blank=True, null=True, upload_to='avatars/')),
+                ('tagged_projects', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, related_name='projects', to='api.Project')),
+                ('user', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='MyTodo',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('description', models.CharField(max_length=100)),
-                ('status', models.CharField(choices=[('OPEN', 'Open'), ('CLOSED', 'Closed')], default='OPEN', max_length=10)),
+                ('status', models.CharField(choices=[
+                 ('OPEN', 'Open'), ('CLOSED', 'Closed')], default='OPEN', max_length=10)),
                 ('created_on', models.DateField(auto_now_add=True)),
-                ('user_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_id', to=settings.AUTH_USER_MODEL)),
+                ('user_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                 related_name='user_id', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Issue',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('uid', models.CharField(max_length=15, unique=True)),
                 ('issue_title', models.CharField(max_length=25)),
                 ('description', models.CharField(blank=True, max_length=100)),
                 ('reported_on', models.DateField(auto_now_add=True)),
                 ('start_date', models.DateField(blank=True, null=True)),
                 ('resolution_date', models.DateField(blank=True, null=True)),
                 ('estimate', models.CharField(blank=True, max_length=50)),
-                ('issue_status', models.CharField(choices=[('IN_PROG', 'Inprogress'), ('DONE', 'Done'), ('TESTING', 'Testing'), ('TESTED', 'Tested'), ('BLOCKED', 'Blocked'), ('TODO', 'Todo')], default='TODO', max_length=15)),
-                ('issue_type', models.CharField(choices=[('TASK', 'Task'), ('STORY', 'Story'), ('BUG', 'Bug')], default='TASK', max_length=15)),
-                ('priority', models.CharField(choices=[('HIGH', 'High'), ('MEDIUM', 'Medium'), ('LOW', 'Low')], default='LOW', max_length=15)),
-                ('assignee', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='assignee', to=settings.AUTH_USER_MODEL)),
-                ('relates_to', models.ManyToManyField(blank=True, related_name='_issue_relates_to_+', to='api.Issue')),
-                ('reporter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reporter', to=settings.AUTH_USER_MODEL)),
-                ('sprint', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='api.Sprint')),
+                ('issue_status', models.CharField(choices=[('IN_PROG', 'Inprogress'), ('DONE', 'Done'), ('TESTING', 'Testing'), (
+                    'TESTED', 'Tested'), ('BLOCKED', 'Blocked'), ('TODO', 'Todo')], default='TODO', max_length=15)),
+                ('issue_type', models.CharField(choices=[
+                 ('TASK', 'Task'), ('STORY', 'Story'), ('BUG', 'Bug')], default='TASK', max_length=15)),
+                ('priority', models.CharField(choices=[
+                 ('HIGH', 'High'), ('MEDIUM', 'Medium'), ('LOW', 'Low')], default='LOW', max_length=15)),
+                ('assignee', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='assignee', to=settings.AUTH_USER_MODEL)),
+                ('relates_to', models.ManyToManyField(blank=True,
+                 related_name='_issue_relates_to_+', to='api.Issue')),
+                ('reporter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                 related_name='reporter', to=settings.AUTH_USER_MODEL)),
+                ('sprint', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, to='api.Sprint')),
             ],
         ),
     ]
