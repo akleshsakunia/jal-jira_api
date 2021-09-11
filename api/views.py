@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from .models import Sprint, Issue, Project, MyTodo
 from .serializers import UserSerializer, SprintSerializer, IssuesSerializer, ProjectsSerializer, MyTodoSerializer
 from django.db.models import Q
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -46,6 +47,7 @@ class MyTodoViewSet(viewsets.ModelViewSet):
     serializer_class = MyTodoSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
+
 class ListIssuesAssignedToUser(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -56,6 +58,8 @@ class ListIssuesAssignedToUser(APIView):
         assigned_issues = Issue.objects.filter(assignee=pk)
         serialized_data = IssuesSerializer(assigned_issues, many=True).data
         return Response(serialized_data)
+
+
 class ListUsersIssues(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -66,6 +70,8 @@ class ListUsersIssues(APIView):
         users_issues = Issue.objects.filter(Q(assignee=pk) | Q(reporter=pk))
         serialized_data = IssuesSerializer(users_issues, many=True).data
         return Response(serialized_data)
+
+
 class ListUsersProjects(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -77,4 +83,21 @@ class ListUsersProjects(APIView):
         user = User.objects.get(pk=request.user.pk)
         tagged_projects = user.profile.tagged_projects
         serialized_data = ProjectsSerializer(tagged_projects, many=True).data
+        return Response(serialized_data)
+
+
+class ListSprintIssues(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, format=None):
+        """
+        Return sprint board items.
+        """
+        print('pk is:', request.user.pk)
+        user = User.objects.get(pk=request.user.pk)
+        default_project = user.profile.default_project or user.profile.tagged_projects.all()[
+            0]
+        project = Project.objects.get(pk=default_project.pk)
+        sprint_issues = Issue.objects.filter(sprint_id=project.curr_sprint)
+        serialized_data = IssuesSerializer(sprint_issues, many=True).data
         return Response(serialized_data)

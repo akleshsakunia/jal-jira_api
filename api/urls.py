@@ -20,5 +20,6 @@ urlpatterns = [
          views.ListIssuesAssignedToUser.as_view(), name='assigned_issues'),
     path(r'all-my-issues/user/<int:pk>/',
          views.ListUsersIssues.as_view(), name='assigned_issues'),
-    path(r'get-my-projects/', views.ListUsersProjects.as_view(), name='my_projects')
+    path(r'get-my-projects/', views.ListUsersProjects.as_view(), name='my_projects'),
+    path(r'board/', views.ListSprintIssues.as_view(), name='board'),
 ]

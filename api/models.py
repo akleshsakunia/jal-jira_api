@@ -22,6 +22,8 @@ class Project(models.Model):
         User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
     updated_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
+    curr_sprint = models.ForeignKey(
+        'Sprint', on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_curr_sprint')
 
     @property
     def project_id(self):
@@ -42,6 +44,8 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     tagged_projects = models.ManyToManyField(
         Project, null=True, blank=True, related_name='projects')
+    default_project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_default_project')
 
     class meta:
         ordering = ['id']
