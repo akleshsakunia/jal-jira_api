@@ -127,8 +127,8 @@ class Issue(models.Model):
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assignee')
     reporter = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='reporter')
-    issue_title = models.CharField(max_length=25, blank=False)
-    description = models.CharField(max_length=100, blank=True)
+    issue_title = models.CharField(max_length=125, blank=False)
+    description = models.CharField(max_length=512, blank=True)
     reported_on = models.DateTimeField(default=timezone.now)
     start_date = models.DateField(null=True, blank=True)
     resolution_date = models.DateField(null=True, blank=True)
