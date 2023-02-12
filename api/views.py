@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.decorators import action, api_view
-from .models import Sprint, Issue, Project, MyTodo
-from .serializers import UserSerializer, SprintSerializer, IssuesSerializer, ProjectsSerializer, MyTodoSerializer
+from .models import Comments, Sprint, Issue, Project, MyTodo
+from .serializers import CommentsSerializer, UserSerializer, SprintSerializer, IssuesSerializer, ProjectsSerializer, MyTodoSerializer
 from django.db.models import Q
 
 
@@ -45,6 +45,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class MyTodoViewSet(viewsets.ModelViewSet):
     queryset = MyTodo.objects.all()
     serializer_class = MyTodoSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    queryset = Comments.objects.all()
+    serializer_class = CommentsSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
 
@@ -100,4 +106,16 @@ class ListSprintIssues(APIView):
         project = Project.objects.get(pk=default_project.pk)
         sprint_issues = Issue.objects.filter(sprint_id=project.curr_sprint)
         serialized_data = IssuesSerializer(sprint_issues, many=True).data
+        return Response(serialized_data)
+
+
+class ListIssueComments(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        """
+        Return a list of all issue comments.
+        """
+        comments = Comments.objects.filter(issue_id=pk)
+        serialized_data = CommentsSerializer(comments, many=True).data
         return Response(serialized_data)

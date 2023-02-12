@@ -9,6 +9,7 @@ router.register(r'sprints', views.SprintViewSet, 'sprints')
 router.register(r'issues', views.IssueViewSet, 'issues')
 router.register(r'projects', views.ProjectViewSet, 'projects')
 router.register(r'mytodos', views.MyTodoViewSet, 'mytodos')
+router.register(r'comments', views.CommentsViewSet, 'comments')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -22,4 +23,5 @@ urlpatterns = [
          views.ListUsersIssues.as_view(), name='assigned_issues'),
     path(r'get-my-projects/', views.ListUsersProjects.as_view(), name='my_projects'),
     path(r'board/', views.ListSprintIssues.as_view(), name='board'),
+    path(r'<int:pk>/comments/', views.ListIssueComments.as_view(), name='comments'),
 ]

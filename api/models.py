@@ -1,9 +1,9 @@
+import uuid
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.utils import timezone
 
 
 class Project(models.Model):
@@ -128,7 +128,7 @@ class Issue(models.Model):
     reporter = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='reporter')
     issue_title = models.CharField(max_length=125, blank=False)
-    description = models.CharField(max_length=512, blank=True)
+    description = models.CharField(max_length=2048, blank=True)
     reported_on = models.DateTimeField(default=timezone.now)
     start_date = models.DateField(null=True, blank=True)
     resolution_date = models.DateField(null=True, blank=True)
@@ -160,3 +160,16 @@ class MyTodo(models.Model):
     status = models.CharField(
         max_length=10, choices=TodoStatus.choices, default=TodoStatus.OPEN)
     created_on = models.DateField(auto_now_add=True)
+
+
+class Comments(models.Model):
+
+    # fields
+    issue_id = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name='%(class)s_issue')
+    comment_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False)
+    comment = models.CharField(max_length=1024, blank=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')

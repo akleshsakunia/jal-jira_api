@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Sprint, Issue, Project, MyTodo
+from .models import Comments, Profile, Sprint, Issue, Project, MyTodo
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -61,4 +61,14 @@ class ProjectsSerializer(serializers.ModelSerializer):
 class MyTodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyTodo
+        fields = '__all__'
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    created_by = serializers.CharField(
+        default=serializers.CurrentUserDefault(),
+    )
+
+    class Meta:
+        model = Comments
         fields = '__all__'
