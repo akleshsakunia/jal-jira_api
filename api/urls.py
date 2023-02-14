@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework import routers
 from . import views
@@ -24,4 +26,10 @@ urlpatterns = [
     path(r'get-my-projects/', views.ListUsersProjects.as_view(), name='my_projects'),
     path(r'board/', views.ListSprintIssues.as_view(), name='board'),
     path(r'<int:pk>/comments/', views.ListIssueComments.as_view(), name='comments'),
-]
+    path(r'project/<int:project_key>/users/',
+         views.ListProjectUsers.as_view(), name='project_users'),
+    path(r'project/<int:project_key>/sprints/',
+         views.ListProjectSprints.as_view(), name='project_sprints'),
+
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -65,10 +65,12 @@ class MyTodoSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    created_by = serializers.CharField(
+    created_by = serializers.HiddenField(
         default=serializers.CurrentUserDefault(),
     )
+    user_info = UserSerializer(source="created_by", read_only=True)
 
     class Meta:
         model = Comments
         fields = '__all__'
+        extra_fields = ['user_info']

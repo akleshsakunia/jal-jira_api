@@ -172,4 +172,4 @@ class Comments(models.Model):
     comment = models.CharField(max_length=1024, blank=False)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_created_by')

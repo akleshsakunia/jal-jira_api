@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import datetime
-from os import environ
+import os
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 
@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get('DJANGO_SECRET')
+SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -166,3 +166,7 @@ JWT_AUTH = {
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
+
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'avatars')
+
+MEDIA_URL = '/avatars/'

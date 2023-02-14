@@ -117,5 +117,36 @@ class ListIssueComments(APIView):
         Return a list of all issue comments.
         """
         comments = Comments.objects.filter(issue_id=pk)
-        serialized_data = CommentsSerializer(comments, many=True).data
+        serialized_data = CommentsSerializer(
+            comments,
+            context={'request': request},
+            many=True).data
+        return Response(serialized_data)
+
+
+class ListProjectUsers(APIView):
+    """Returns list of users tagged to a project"""
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, project_key, format=None):
+        """
+        Return a list of all issue comments.
+        """
+        users = User.objects.filter(profile__tagged_projects=project_key)
+        serialized_data = UserSerializer(
+            users,
+            many=True).data
+        return Response(serialized_data)
+
+
+class ListProjectSprints(APIView):
+    """Returns list of active sprints tagged to a project"""
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, project_key, format=None):
+        project_active_sprint = Sprint.objects.filter(
+            project=project_key, status=Sprint.SprintStatus.ACTIVE.value)
+        serialized_data = SprintSerializer(
+            project_active_sprint,
+            many=True).data
         return Response(serialized_data)

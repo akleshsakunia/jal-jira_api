@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Sprint, Issue, Project, MyTodo
+from .models import Comments, Profile, Sprint, Issue, Project, MyTodo
 
 
 @admin.register(Profile)
@@ -11,7 +11,8 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Sprint)
 class SprintAdmin(admin.ModelAdmin):
     list_display = ('id', 'short_description', 'start_date', 'status')
-    exclude = ('display_id', ) 
+    exclude = ('display_id', )
+
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
@@ -26,3 +27,8 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(MyTodo)
 class MytodoAdmin(admin.ModelAdmin):
     list_display = ('id', 'description', 'status')
+
+
+@admin.register(Comments)
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ('comment', 'created_by', 'issue_id')
