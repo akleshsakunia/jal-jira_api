@@ -95,15 +95,15 @@ class ListUsersProjects(APIView):
 class ListSprintIssues(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, format=None):
+    def get(self, request, project_key=None, format=None):
         """
         Return sprint board items.
         """
-        print('pk is:', request.user.pk)
-        user = User.objects.get(pk=request.user.pk)
-        default_project = user.profile.default_project or user.profile.tagged_projects.all()[
-            0]
-        project = Project.objects.get(pk=default_project.pk)
+        if not project_key:
+            user = User.objects.get(pk=request.user.pk)
+            default_project = user.profile.default_project or user.profile.tagged_projects.all()[
+                0]
+        project = Project.objects.get(pk=project_key or default_project.pk)
         sprint_issues = Issue.objects.filter(sprint_id=project.curr_sprint)
         serialized_data = IssuesSerializer(sprint_issues, many=True).data
         return Response(serialized_data)

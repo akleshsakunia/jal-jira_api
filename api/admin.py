@@ -21,7 +21,8 @@ class IssueAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('project_id', 'project_title', 'start_date', 'status')
+    list_display = ('project_id', 'project_title',
+                    'start_date', 'status', 'curr_sprint')
 
 
 @admin.register(MyTodo)

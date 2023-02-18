@@ -23,7 +23,7 @@ class Project(models.Model):
     updated_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
     curr_sprint = models.ForeignKey(
-        'Sprint', on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_curr_sprint')
+        'Sprint', on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_curr_sprint')
 
     @property
     def project_id(self):
