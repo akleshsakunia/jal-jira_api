@@ -21,7 +21,7 @@ class Project(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
     updated_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_updated_by')
     curr_sprint = models.ForeignKey(
         'Sprint', on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_curr_sprint')
 
@@ -83,7 +83,7 @@ class Sprint(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_created_by')
     updated_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, editable=False, related_name='%(class)s_updated_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_updated_by')
 
     @property
     def sprint_id(self):

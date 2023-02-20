@@ -41,6 +41,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectsSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(created_by=user)
+        serializer.save(updated_by=user)
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        serializer.save(updated_by=user)
+
 
 class MyTodoViewSet(viewsets.ModelViewSet):
     queryset = MyTodo.objects.all()

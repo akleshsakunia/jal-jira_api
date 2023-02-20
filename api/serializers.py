@@ -19,9 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SprintSerializer(serializers.ModelSerializer):
-    created_by = serializers.HiddenField(
-        default=serializers.CurrentUserDefault(),
-    )
+    created_by_user = UserSerializer(source="created_by", read_only=True)
+    updated_by_user = UserSerializer(source="updated_by", read_only=True)
 
     def __init__(self, *args, **kwargs):
         kwargs['partial'] = True
@@ -30,6 +29,7 @@ class SprintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sprint
         fields = '__all__'
+        extra_fields = ['created_by_user', 'updated_by_user']
         extra_kwargs = {"display_id": {"required": False, "allow_null": True}}
 
     def create(self, validated_data):
@@ -49,13 +49,13 @@ class IssuesSerializer(serializers.ModelSerializer):
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
-    created_by = serializers.HiddenField(
-        default=serializers.CurrentUserDefault(),
-    )
+    created_by_user = UserSerializer(source="created_by", read_only=True)
+    updated_by_user = UserSerializer(source="updated_by", read_only=True)
 
     class Meta:
         model = Project
         fields = '__all__'
+        extra_fields = ['created_by_user', 'updated_by_user']
 
 
 class MyTodoSerializer(serializers.ModelSerializer):
