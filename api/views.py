@@ -44,7 +44,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(created_by=user)
-        serializer.save(updated_by=user)
+        created_project = serializer.save(updated_by=user)
+        user.profile.tagged_projects.add(created_project)
 
     def perform_update(self, serializer):
         user = self.request.user
