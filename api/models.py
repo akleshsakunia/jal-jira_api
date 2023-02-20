@@ -122,7 +122,6 @@ class Issue(models.Model):
         LOW = 'LOW'
 
     # fields
-    uid = models.CharField(max_length=15, unique=True)
     assignee = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assignee')
     reporter = models.ForeignKey(

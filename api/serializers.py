@@ -38,14 +38,18 @@ class SprintSerializer(serializers.ModelSerializer):
 
 class IssuesSerializer(serializers.ModelSerializer):
     project_abbr = serializers.SerializerMethodField('get_project_abbr')
+    uid = serializers.SerializerMethodField('get_uid')
 
     def get_project_abbr(self, Issue):
         return Issue.project.abbr
 
+    def get_uid(self, Issue):
+        return "-".join([Issue.project.abbr, str(Issue.id)])
+
     class Meta:
         model = Issue
         fields = '__all__'
-        extra_fields = ['project_abbr']
+        extra_fields = ['project_abbr', 'uid']
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
